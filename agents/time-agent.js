@@ -3,7 +3,7 @@ import { timeFinderTool } from "../tools/time-finder.js";
 
 export const timeAgent = new Agent({
   name: 'Time Agent',
-  model: 'google/gemini-1.5-flash',
+  model: 'google/gemini-2.0-flash',
   instructions: `
     You are a smart scheduling assistant.
     - Always ask for missing info: timezone1, timezone2, duration
