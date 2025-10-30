@@ -1,8 +1,8 @@
 import { Mastra } from '@mastra/core/mastra';
 import { PinoLogger } from '@mastra/loggers';
 import { LibSQLStore } from '@mastra/libsql';
-import { timeAgent } from '../agents/time-agent.js';
-import { a2aAgentRoute } from '../routes/a2a-agent-route';
+import { timeAgent } from '../../agents/time-agent.js';
+import { a2aAgentRoute } from '../../routes/a2a-agent-route';
 
 export const mastra = new Mastra({
   agents: { timeAgent },
