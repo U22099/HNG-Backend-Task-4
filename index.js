@@ -1,24 +1,17 @@
-import { Mastra } from '@mastra/core/mastra';
-import { PinoLogger } from '@mastra/loggers';
-import { LibSQLStore } from '@mastra/libsql';
-import { timeAgent } from './agents/time-agent.js';
-import { a2aAgentRoute } from './routes/a2a-agent-route';
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-export const mastra = new Mastra({
-  agents: { timeAgent },
-  storage: new LibSQLStore({ url: ":memory:" }),
-  logger: new PinoLogger({
-    name: 'Mastra',
-    level: 'debug',
-  }),
-  observability: {
-    default: { enabled: true },
-  },
-  server: {
-    build: {
-      openAPIDocs: true,
-      swaggerUI: true,
-    },
-    apiRoutes: [a2aAgentRoute]
-  }
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = 3000;
+
+app.get('/', (_, res) => {
+    res.sendFile(path.join(__dirname, 'README.md'));
+});
+
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
 });
