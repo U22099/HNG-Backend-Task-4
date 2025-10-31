@@ -8,11 +8,9 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
       const mastra = c.get('mastra');
       const agentId = c.req.param('agentId');
 
-      // Parse JSON-RPC 2.0 request
       const body = await c.req.json();
       const { jsonrpc, id: requestId, method, params } = body;
 
-      // Validate JSON-RPC 2.0 format
       if (jsonrpc !== '2.0' || !requestId) {
         return c.json({
           jsonrpc: '2.0',
@@ -36,7 +34,6 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
         }, 404);
       }
 
-      // Extract messages from params
       const { message, messages, contextId, taskId, metadata } = params || {};
 
       let messagesList = [];
@@ -46,7 +43,6 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
         messagesList = messages;
       }
 
-      // Convert A2A messages to Mastra format
       const mastraMessages = messagesList.map((msg) => ({
         role: msg.role,
         content: msg.parts?.map((part) => {
@@ -56,11 +52,9 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
         }).join('\n') || ''
       }));
 
-      // Execute agent
       const response = await agent.generate(mastraMessages);
       const agentText = response.text || '';
 
-      // Build artifacts array
       const artifacts = [
         {
           artifactId: randomUUID(),
@@ -69,7 +63,6 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
         }
       ];
 
-      // Add tool results as artifacts
       if (response.toolResults && response.toolResults.length > 0) {
         artifacts.push({
           artifactId: randomUUID(),
@@ -80,8 +73,6 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
           }))
         });
       }
-
-      // Build conversation history
       const history = [
         ...messagesList.map((msg) => ({
           kind: 'message',
@@ -99,7 +90,6 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
         }
       ];
 
-      // Return A2A-compliant response
       return c.json({
         jsonrpc: '2.0',
         id: requestId,

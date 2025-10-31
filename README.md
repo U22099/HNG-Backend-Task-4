@@ -1,98 +1,120 @@
-# Mastra Time Agent API
+# WeatherSync Agent API
 
-## Overview
-This project is a Node.js API server built with the Mastra framework. It exposes a smart scheduling assistant (Time Agent) powered by Google's Gemini model through an A2A (Agent-to-Agent) compliant JSON-RPC endpoint.
+An intelligent, AI-powered weather assistant built with Node.js and the Mastra framework. This service provides real-time weather information through a conversational API endpoint, leveraging Google's Gemini model for natural language understanding and interaction.
 
-## Features
-- **Mastra Framework**: Provides the core structure for building, managing, and deploying AI agents.
-- **Google Gemini**: The underlying language model used for natural language understanding and generating scheduling suggestions.
-- **A2A Protocol**: Implements a standardized Agent-to-Agent communication protocol over a JSON-RPC 2.0 interface.
-- **Timezone-Aware Scheduling**: Features a dedicated tool (`time-finder`) to calculate and suggest overlapping meeting slots across different timezones.
+## ✨ Features
 
-## Getting Started
+-   **Intelligent Agent**: Utilizes a Mastra-powered AI agent capable of understanding natural language queries about weather.
+-   **Real-Time Data**: Integrates with the Open-Meteo API to fetch accurate, up-to-the-minute weather and geocoding data.
+-   **Tool-Enabled**: The agent uses a dedicated `weatherTool` to ensure data accuracy, never guessing or hallucinating information.
+-   **JSON-RPC Compliant**: Exposes a standardized API endpoint for easy integration and predictable interactions.
+-   **In-Memory State**: Uses LibSQL for fast, in-memory conversation and session management.
+
+## 🛠️ Technologies Used
+
+| Technology                                                 | Description                                |
+| ---------------------------------------------------------- | ------------------------------------------ |
+| [Node.js](https://nodejs.org/)                             | JavaScript runtime environment             |
+| [Mastra](https://www.mastra.io/)                           | Framework for building AI agents and tools |
+| [Google Gemini](https://ai.google.dev/)                    | Core Large Language Model (LLM)            |
+| [Zod](https://zod.dev/)                                    | Schema declaration and validation          |
+| [LibSQL](https://turso.tech/)                              | In-memory database for session storage     |
+| [Open-Meteo API](https://open-meteo.com/)                  | Source for weather and geocoding data      |
+
+## 🚀 Getting Started
+
+Follow these instructions to get the project up and running on your local machine.
+
+### Prerequisites
+
+-   Node.js (v18 or higher)
+-   npm
+
 ### Installation
-1.  Clone the repository:
+
+1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/your-username/hng-backend-task-4.git
-    cd hng-backend-task-4
+    git clone https://github.com/U22099/HNG-Backend-Task-4.git
+    cd HNG-Backend-Task-4
     ```
 
-2.  Install the dependencies:
+2.  **Install dependencies**:
     ```bash
     npm install
     ```
 
-3.  Run the development server:
-    ```bash
-    npm run dev
+3.  **Set up environment variables**:
+    Create a `.env` file in the root of the project and add the following variable. You can get an API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+    ```env
+    GOOGLE_API_KEY="YOUR_GOOGLE_AI_API_KEY"
     ```
-    The server will start on the port specified in your environment variables (e.g., `http://localhost:3000`).
 
-### Environment Variables
-Create a `.env` file in the root directory and add the following variables. These are required for the application to function correctly.
+### Running the Application
 
-| Variable          | Description                                    | Example                          |
-| ----------------- | ---------------------------------------------- | -------------------------------- |
-| `PORT`            | The port on which the server will run.         | `3000`                           |
-| `GOOGLE_API_KEY`  | Your API key for the Google Gemini model.      | `AIzaSyB...`                     |
+Start the development server using the Mastra CLI:
+
+```bash
+npm run dev
+```
+
+The server will start, and the API will be available at `http://localhost:4000`.
+
+---
 
 ## API Documentation
+
 ### Base URL
-The API base URL will depend on your environment. For local development, it is typically:
-`http://localhost:3000`
+
+`http://localhost:4000`
 
 ### Endpoints
+
 #### POST /a2a/agent/:agentId
-Executes a task on the specified agent using the A2A JSON-RPC 2.0 protocol. The `:agentId` should correspond to an agent registered in the Mastra instance (e.g., `timeAgent`).
+
+Interacts with a specified AI agent. The `agentId` for the weather assistant is `weatherAgent`. The endpoint expects a JSON-RPC 2.0 compliant request body.
 
 **Request**:
-The request body must be a valid JSON-RPC 2.0 object. The `params` object should contain the message(s) to be sent to the agent.
 
-*Payload Structure:*
 ```json
 {
   "jsonrpc": "2.0",
-  "id": "request-unique-id-123",
-  "method": "executeTask",
+  "id": "req-12345",
+  "method": "generate",
   "params": {
-    "taskId": "task-unique-id-456",
-    "contextId": "conversation-context-id-789",
-    "messages": [
-      {
-        "role": "user",
-        "parts": [
-          {
-            "kind": "text",
-            "text": "Find a 30 minute meeting slot for me in America/New_York and someone in Europe/Berlin for tomorrow"
-          }
-        ]
-      }
-    ]
+    "message": {
+      "role": "user",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "What's the weather like in Paris?"
+        }
+      ]
+    }
   }
 }
 ```
 
 **Response**:
-A successful response returns a JSON-RPC 2.0 object containing the agent's output, conversation history, and any generated artifacts.
 
-*Success (200 OK) Response Example:*
+A successful response returns a task object containing the agent's generated message, artifacts (including tool results), and conversation history.
+
 ```json
 {
     "jsonrpc": "2.0",
-    "id": "request-unique-id-123",
+    "id": "req-12345",
     "result": {
-        "id": "task-unique-id-456",
-        "contextId": "conversation-context-id-789",
+        "id": "a6f8b1c1-c9d3-4e4a-9b7e-9f3b3a6c8e1a",
+        "contextId": "b2c3d4e5-e5f6-4a3b-8c7d-8e9f0a1b2c3d",
         "status": {
             "state": "completed",
-            "timestamp": "2024-07-28T10:30:00.000Z",
+            "timestamp": "2024-07-28T10:30:00.123Z",
             "message": {
-                "messageId": "msg-agent-response-1",
+                "messageId": "c3d4e5f6-f6a7-4b2c-9d8e-9f0a1b2c3d4e",
                 "role": "agent",
                 "parts": [
                     {
                         "kind": "text",
-                        "text": "Of course! Here are the top 3 available slots for a 30-minute meeting tomorrow:\n- 9:00 AM EDT → 3:00 PM CEST\n- 10:00 AM EDT → 4:00 PM CEST\n- 11:00 AM EDT → 5:00 PM CEST"
+                        "text": "In Paris: Partly cloudy, 22.5°C (feels like 21.8°C), Humidity 65%, Wind 12.6 km/h"
                     }
                 ],
                 "kind": "message"
@@ -100,30 +122,31 @@ A successful response returns a JSON-RPC 2.0 object containing the agent's outpu
         },
         "artifacts": [
             {
-                "artifactId": "artifact-agent-response-1",
-                "name": "timeAgentResponse",
+                "artifactId": "d4e5f6a7-a7b8-4c3d-a8e9-0f1a2b3c4d5e",
+                "name": "weatherAgentResponse",
                 "parts": [
                     {
                         "kind": "text",
-                        "text": "Of course! Here are the top 3 available slots for a 30-minute meeting tomorrow:\n- 9:00 AM EDT → 3:00 PM CEST\n- 10:00 AM EDT → 4:00 PM CEST\n- 11:00 AM EDT → 5:00 PM CEST"
+                        "text": "In Paris: Partly cloudy, 22.5°C (feels like 21.8°C), Humidity 65%, Wind 12.6 km/h"
                     }
                 ]
             },
             {
-                "artifactId": "artifact-tool-result-1",
+                "artifactId": "e5f6a7b8-b8c9-4d4e-b9f0-1a2b3c4d5e6f",
                 "name": "ToolResults",
                 "parts": [
                     {
                         "kind": "data",
                         "data": {
-                            "toolId": "find-meeting-slots",
-                            "input": { "tz1": "America/New_York", "tz2": "Europe/Berlin", "duration": 30, "date": "tomorrow" },
+                            "toolId": "get-weather",
+                            "status": "success",
                             "output": {
-                                "slots": [
-                                    { "America/New_York": "9:00 AM", "Europe/Berlin": "3:00 PM", "duration": 30, "utcStart": "..." },
-                                    { "America/New_York": "10:00 AM", "Europe/Berlin": "4:00 PM", "duration": 30, "utcStart": "..." },
-                                    { "America/New_York": "11:00 AM", "Europe/Berlin": "5:00 PM", "duration": 30, "utcStart": "..." }
-                                ]
+                                "temperature": 22.5,
+                                "feelsLike": 21.8,
+                                "humidity": 65,
+                                "windSpeed": 12.6,
+                                "conditions": "Partly cloudy",
+                                "location": "Paris"
                             }
                         }
                     }
@@ -134,16 +157,21 @@ A successful response returns a JSON-RPC 2.0 object containing the agent's outpu
             {
                 "kind": "message",
                 "role": "user",
-                "parts": [{ "kind": "text", "text": "Find a 30 minute meeting slot for me in America/New_York and someone in Europe/Berlin for tomorrow" }],
-                "messageId": "msg-user-1",
-                "taskId": "task-unique-id-456"
+                "parts": [{ "kind": "text", "text": "What's the weather like in Paris?" }],
+                "messageId": "f6a7b8c9-c9d0-4e5f-a0a1-2b3c4d5e6f7a",
+                "taskId": "a6f8b1c1-c9d3-4e4a-9b7e-9f3b3a6c8e1a"
             },
             {
                 "kind": "message",
                 "role": "agent",
-                "parts": [{ "kind": "text", "text": "Of course! Here are the top 3 available slots for a 30-minute meeting tomorrow:\n- 9:00 AM EDT → 3:00 PM CEST\n- 10:00 AM EDT → 4:00 PM CEST\n- 11:00 AM EDT → 5:00 PM CEST" }],
-                "messageId": "msg-agent-response-1",
-                "taskId": "task-unique-id-456"
+                "parts": [
+                    {
+                        "kind": "text",
+                        "text": "In Paris: Partly cloudy, 22.5°C (feels like 21.8°C), Humidity 65%, Wind 12.6 km/h"
+                    }
+                ],
+                "messageId": "c3d4e5f6-f6a7-4b2c-9d8e-9f0a1b2c3d4e",
+                "taskId": "a6f8b1c1-c9d3-4e4a-9b7e-9f3b3a6c8e1a"
             }
         ],
         "kind": "task"
@@ -152,39 +180,31 @@ A successful response returns a JSON-RPC 2.0 object containing the agent's outpu
 ```
 
 **Errors**:
-- `400 Bad Request`: The request payload is not a valid JSON-RPC 2.0 object.
-  ```json
-  {
-      "jsonrpc": "2.0",
-      "id": null,
-      "error": {
-          "code": -32600,
-          "message": "Invalid Request: jsonrpc must be \"2.0\" and id is required"
-      }
-  }
-  ```
-- `404 Not Found`: The specified `:agentId` does not exist.
-  ```json
-  {
-      "jsonrpc": "2.0",
-      "id": "request-unique-id-123",
-      "error": {
-          "code": -32602,
-          "message": "Agent 'nonExistentAgent' not found"
-      }
-  }
-  ```
-- `500 Internal Server Error`: An unexpected error occurred on the server.
-  ```json
-  {
-      "jsonrpc": "2.0",
-      "id": null,
-      "error": {
-          "code": -32603,
-          "message": "Internal error",
-          "data": {
-              "details": "Error message from the server."
-          }
-      }
-  }
-  ```
+
+-   `400 Bad Request`: The request is not a valid JSON-RPC 2.0 request (e.g., `jsonrpc` is not "2.0" or `id` is missing).
+-   `404 Not Found`: The requested `agentId` (e.g., `weatherAgent`) could not be found on the server.
+-   `500 Internal Server Error`: An unexpected error occurred while the agent was processing the request. The response body may contain additional details.
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have suggestions for improvement or want to fix a bug, please feel free to open an issue or submit a pull request.
+
+1.  **Fork the Project**
+2.  **Create your Feature Branch** (`git checkout -b feature/AmazingFeature`)
+3.  **Commit your Changes** (`git commit -m 'Add some AmazingFeature'`)
+4.  **Push to the Branch** (`git push origin feature/AmazingFeature`)
+5.  **Open a Pull Request**
+
+## 📄 License
+
+This project is licensed under the ISC License.
+
+## 👤 Author
+
+Connect with the author:
+
+-   **Twitter**: [@dan_22099](https://twitter.com/dan_22099)
+
+<br/>
+
+[![Readme was generated by Dokugen](https://img.shields.io/badge/Readme%20was%20generated%20by-Dokugen-brightgreen)](https://www.npmjs.com/package/dokugen)

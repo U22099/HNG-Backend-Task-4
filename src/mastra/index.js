@@ -1,14 +1,14 @@
 import { Mastra } from '@mastra/core/mastra';
 import { PinoLogger } from '@mastra/loggers';
 import { LibSQLStore } from '@mastra/libsql';
-import { timeAgent } from '../../agents/time-agent.js';
-import { a2aAgentRoute } from '../../routes/a2a-agent-route';
+import { weatherAgent } from '../agents/weather-agent';
+import { a2aAgentRoute } from '../routes/a2a-agent-route';
 
 export const mastra = new Mastra({
-  agents: { timeAgent },
+  agents: { weatherAgent },
   storage: new LibSQLStore({ url: ":memory:" }),
   logger: new PinoLogger({
-    name: 'Mastra',
+    name: 'Mastra Weather',
     level: 'debug',
   }),
   observability: {
