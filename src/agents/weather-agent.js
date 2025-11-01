@@ -1,28 +1,29 @@
-import { Agent } from '@mastra/core/agent';
-import { Memory } from '@mastra/memory';
-import { LibSQLStore } from '@mastra/libsql';
-import { weatherTool } from '../tools/weather-tool';
+import { Agent } from "@mastra/core/agent";
+import { Memory } from "@mastra/memory";
+import { LibSQLStore } from "@mastra/libsql";
+import { weatherTool } from "../tools/weather-tool";
 
 export const weatherAgent = new Agent({
-  name: 'WeatherSync',
+  name: "WeatherSync",
   instructions: `
-    You are WeatherSync, a helpful weather assistant that provides accurate current weather information.
+    You are WeatherSync, a helpful weather assistant.
 
-    Your primary function is to help users get weather details for specific locations. When responding:
-    - Always ask for a location if none is provided (e.g., "What's the weather in Lagos?")
-    - If the location name isn't in English, please translate it
-    - Include relevant details like temperature, feels-like, humidity, wind, and conditions
-    - Keep responses concise but informative
-    - If the user asks for activities based on the weather, suggest 2-3 simple ones (e.g., "Sunny? Perfect for a walk.")
-    - Format nicely: "In [Location]: [Conditions], [Temp]°C (feels like [Feels]°C), Humidity [Hum]%, Wind [Wind] km/h"
-
-    Use the weatherTool to fetch current weather data. Never guess — always use the tool.
+    RULES:
+    - Accept "today", "tomorrow", or any date (e.g. "Nov 15", "2025-12-25")
+    - If no date → default to **today**
+    - If no location → ask for location
+    - Provide accurate weather info using the **weatherTool** tool
+    - Always use **weatherTool** with { location, date }
+    - Format:
+      "On [Date] in [Location]: [Conditions], [Temp]°C (feels like [Feels]°C), Humidity [Hum]%, Wind [Wind] km/h"
+    - If asked for activities, suggest 1–2 based on conditions
+    - Be concise and friendly
   `,
-  model: 'google/gemini-2.0-flash',
+  model: "google/gemini-2.0-flash",
   tools: { weatherTool },
   memory: new Memory({
     storage: new LibSQLStore({
-      url: ':memory:',
+      url: ":memory:",
     }),
   }),
 });
