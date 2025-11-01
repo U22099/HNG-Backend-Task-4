@@ -17,6 +17,7 @@
     "@mastra/libsql": "latest",
     "@mastra/loggers": "latest",
     "@mastra/memory": "^0.15.10",
+    "date-fns": "^4.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

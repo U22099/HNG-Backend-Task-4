@@ -2,7 +2,6 @@ import { addDays, format, startOfDay } from "date-fns";
 import { createTool } from "@mastra/core/tools";
 import { z } from "zod";
 
-// Helper: Get weather conditions from WMO code (simple map)
 function getWeatherCondition(code) {
   const conditions = {
     0: "Clear sky",
