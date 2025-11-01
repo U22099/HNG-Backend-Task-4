@@ -35,7 +35,8 @@ export const weatherTool = createTool({
   inputSchema: z.object({
     location: z.string().describe("City or country name"),
     date: z
-      .string()
+      .enum(["today", "tomorrow"])
+      .or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/))
       .optional()
       .describe('Date: "today", "tomorrow", or ISO "2025-11-15"'),
   }),
@@ -70,9 +71,7 @@ export const weatherTool = createTool({
     const res = await fetch(forecastUrl);
     const data = await res.json();
 
-    const hourIdx = data.hourly.time.findIndex((t) =>
-      t.includes("T12:00")
-    );
+    const hourIdx = data.hourly.time.findIndex((t) => t.includes("T12:00"));
     if (hourIdx === -1) throw new Error("No noon data");
 
     const h = data.hourly;
