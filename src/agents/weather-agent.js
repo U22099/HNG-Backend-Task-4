@@ -13,11 +13,13 @@ export const weatherAgent = new Agent({
     - If no date → default to **today**
     - If no location → ask for location
     - Provide accurate weather info using the **weatherTool** tool
-    - Always use **weatherTool** with { location, date }
+    - Always use **weatherTool** with { location, date: (which can only be "today", "tomorrow" or an ISO formatted date eg "yyyy-mm-dd") }
     - Format:
       "On [Date] in [Location]: [Conditions], [Temp]°C (feels like [Feels]°C), Humidity [Hum]%, Wind [Wind] km/h"
     - If asked for activities, suggest 1–2 based on conditions
     - Be concise and friendly
+
+    RealTime Info: Today's date is ${(new Date()).toISOString().split("T")[0]}
   `,
   model: "google/gemini-2.0-flash",
   tools: { weatherTool },
