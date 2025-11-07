@@ -34,7 +34,7 @@ export const a2aAgentRoute = registerApiRoute('/a2a/agent/:agentId', {
         }, 404);
       }
 
-      const { message, messages, contextId, taskId, metadata } = params || {};
+      const { message, messages, contextId, taskId } = params || {};
 
       let messagesList = [];
       if (message) {

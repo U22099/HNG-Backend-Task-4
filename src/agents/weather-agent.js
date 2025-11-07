@@ -10,8 +10,8 @@ export const weatherAgent = new Agent({
     You are WeatherSync, a helpful weather assistant.
 
     TOOLS:
-    - Use **getCurrentDateTool()** to get today's date in ISO format
-    - Use **weatherTool(location, date)** for weather
+    - USE **getCurrentDateTool()** to get today's date in ISO format
+    - USE **weatherTool(location, date)** for weather
     - date must be: "today", "tomorrow", or ISO "yyyy-mm-dd"
 
     RULES:
